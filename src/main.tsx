@@ -1,13 +1,12 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App.tsx";
-import { FlowProvider } from "./context/FlowContext.tsx";
+import App from "./App";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <FlowProvider>
-      <App />
-    </FlowProvider>
-  </StrictMode>,
-);
+import "./index.css";
+import "./xy-theme.css";
+import "@xyflow/react/dist/style.css";
+
+const container = document.getElementById("app");
+
+if (!container) throw new Error("Root #app not found");
+
+createRoot(container).render(<App />);

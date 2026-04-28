@@ -1,35 +1,47 @@
-import React, { useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Handle, Position } from "reactflow";
+import { useRef } from "react";
+import { Canvas } from "@react-three/fiber";
+import type { Mesh } from "three";
+import { Handle, Position, type NodeProps } from "reactflow";
 
-function Box(props) {
-  const ref = useRef();
-  //   useFrame((state, delta) => (ref.current.rotation.x += delta))
-  // Return the view, these are regular Threejs elements expressed in JSX
+type OutputNodeData = {
+  label?: string;
+};
+
+type BoxProps = {
+  position?: [number, number, number];
+  rotation?: [number, number, number];
+  scale?: [number, number, number];
+};
+
+function Box(props: BoxProps) {
+  const ref = useRef<Mesh>(null);
+
   return (
-    <mesh {...props} ref={ref}>
+    <mesh ref={ref} {...props}>
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={"orange"} />
+      <meshStandardMaterial color="orange" />
     </mesh>
   );
 }
 
 function Scene() {
   return (
-    <Canvas>
-      <ambientLight />
-      <pointLight position={[3, 3, 3]} />
+    <Canvas camera={{ position: [0, 0, 8], fov: 45 }}>
+      <ambientLight intensity={1} />
+      <pointLight position={[3, 3, 3]} intensity={2} />
+
       <Box position={[0, 0, 0]} rotation={[0, 0, 0]} scale={[3, 3, 3]} />
     </Canvas>
   );
 }
 
-export function Output({ data }) {
+export function Output({ data }: NodeProps<OutputNodeData>) {
   return (
     <div className="h-80 w-70 rounded-md bg-back overflow-hidden border border-solid border-back">
       <Handle type="target" position={Position.Left} id="p" style={{ top: 60 }}>
         <div className="text-white relative left-3 bottom-3">p</div>
       </Handle>
+
       <Handle
         type="target"
         position={Position.Left}
@@ -38,6 +50,7 @@ export function Output({ data }) {
       >
         <div className="text-white relative left-3 bottom-3">r</div>
       </Handle>
+
       <Handle
         type="target"
         position={Position.Left}
@@ -46,8 +59,12 @@ export function Output({ data }) {
       >
         <div className="text-white relative left-3 bottom-3">s</div>
       </Handle>
-      <div className="p-2 bg-orange-500 z-10  text-white">Output</div>
-      <div>
+
+      <div className="p-2 bg-orange-500 text-white">
+        {data?.label ?? "Output"}
+      </div>
+
+      <div className="h-[calc(100%-40px)]">
         <Scene />
       </div>
     </div>
